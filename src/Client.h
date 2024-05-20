@@ -25,11 +25,11 @@ public:
     static bool ShouldClose;
     static std::string Title;
 
-    static void UpdatePixelBuffer(const std::array<unsigned char, 8192>& recvBuffer);
+    static void UpdatePixelBuffer(const void* palette, const void* pixelData);
 
 private:
     static std::array<uint32_t, PixelsSize> PixelBuffer;
-    static raylib::Color Palette[16];
+    static raylib::Vector3 Palette[16];
     static bool UpdateScreen;
 
     static bool isLittleEndian();

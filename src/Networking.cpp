@@ -45,7 +45,7 @@ void Networking::StartThread(const char* ip, const int port, std::string gameNam
 
             switch (recv_buf[0]) {
             case S2C_UPDATE_DATA:
-                    Client::UpdatePixelBuffer(recv_buf);
+                    Client::UpdatePixelBuffer(recv_buf.begin()+1, recv_buf.begin()+1+16*3);
                     break;
 
                 case S2C_CONNECT_FAIL:

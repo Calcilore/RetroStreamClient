@@ -7,10 +7,7 @@
 #undef DrawText
 #endif
 
-raylib::Color Client::Palette[] = {
-    raylib::WHITE, raylib::BLACK, raylib::RED, raylib::GREEN, raylib::BLUE, raylib::YELLOW, raylib::ORANGE, raylib::PURPLE,
-    raylib::GRAY, raylib::DARKGRAY, raylib::MAROON, raylib::DARKGREEN, raylib::DARKBLUE, raylib::GOLD, raylib::BROWN, raylib::PINK
-};
+raylib::Vector3 Client::Palette[16];
 
 bool Client::ShouldClose = false;
 std::string Client::Title = "FPS: ";
@@ -25,6 +22,7 @@ void Client::Init() {
     const raylib::Shader shader = raylib::LoadShaderFromMemory(nullptr,
         isLittleEndian() ? pixelDecoderShaderLittleEndian : pixelDecoderShaderBigEndian);
     const int pixelDataLoc = raylib::GetShaderLocation(shader, "pixelData");
+    const int paletteLoc = raylib::GetShaderLocation(shader, "palette");
 
     while (!raylib::WindowShouldClose() && !ShouldClose) {
         for (uint8_t i = 0; i < controlsLength; ++i) {
@@ -45,6 +43,7 @@ void Client::Init() {
             // glsl only supports uints, but raylib doesnt support SHADER_UNIFORM_UINT (why does that not exist?)
             // so we pretend PixelBuffer is a uint array, and it has a size of 384 (same size in bytes)
             raylib::SetShaderValueV(shader, pixelDataLoc, PixelBuffer.begin(), raylib::SHADER_UNIFORM_INT, 384);
+            raylib::SetShaderValueV(shader, paletteLoc, Palette, raylib::SHADER_UNIFORM_VEC3, 16);
         }
 
         // draw the shader (conversions are done in the shader!)
@@ -74,8 +73,18 @@ void Client::Init() {
     raylib::CloseWindow();
 }
 
-void Client::UpdatePixelBuffer(const std::array<unsigned char, 8192>& recvBuffer) {
-    std::memcpy(PixelBuffer.begin(), recvBuffer.begin()+1, PixelsSize);
+void Client::UpdatePixelBuffer(const void* palette, const void* pixelData) {
+    // palette is sent as 3 bytes, we need 3 floats.
+    const auto* paletteU = reinterpret_cast<const uint8_t*>(palette);
+    for (int i = 0; i < 16; ++i) {
+        Palette[i] = raylib::Vector3{
+            static_cast<float>(paletteU[i*3+0]) / 255.0f,
+            static_cast<float>(paletteU[i*3+1]) / 255.0f,
+            static_cast<float>(paletteU[i*3+2]) / 255.0f
+        };
+    }
+
+    std::memcpy(PixelBuffer.begin(), pixelData, PixelsSize);
     UpdateScreen = true;
 }
 

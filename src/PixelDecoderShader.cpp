@@ -5,22 +5,12 @@
 const char* pixelDecoderShaderBigEndian = R"glsl(
 #version 330
 
-const vec3 palette[16] = vec3[] (
-    vec3(255.0/255.0, 255.0/255.0, 255.0/255.0), vec3(0.0/255.0, 0.0/255.0, 0.0/255.0),
-    vec3(230.0/255.0, 41.0/255.0, 55.0/255.0), vec3(0.0/255.0, 228.0/255.0, 48.0/255.0),
-    vec3(0.0/255.0, 121.0/255.0, 241.0/255.0), vec3(253.0/255.0, 249.0/255.0, 0.0/255.0),
-    vec3(255.0/255.0, 161.0/255.0, 0.0/255.0), vec3(200.0/255.0, 122.0/255.0, 255.0/255.0),
-    vec3(130.0/255.0, 130.0/255.0, 130.0/255.0), vec3(80.0/255.0, 80.0/255.0, 80.0/255.0),
-    vec3(190.0/255.0, 33.0/255.0, 55.0/255.0), vec3(0.0/255.0, 117.0/255.0, 44.0/255.0),
-    vec3(0.0/255.0, 82.0/255.0, 172.0/255.0), vec3(255.0/255.0, 203.0/255.0, 0.0/255.0),
-    vec3(127.0/255.0, 106.0/255.0, 79.0/255.0), vec3(255.0/255.0, 109.0/255.0, 194.0/255.0)
-);
-
 const float pixelScale = 1.0/12.0;
 
 // this uniform is an int instead of a uint because for some reason i cant copy data into a uint, the uniform
 // shader type is just not there
 uniform int pixelData[384]; // 1536 bytes, 1536/4 uints (384), 2 pixels per byte (8 per uint), 64*48 resolution
+uniform vec3 palette[16];
 
 out vec4 fragColor;
 
@@ -64,22 +54,12 @@ void main() {
 const char* pixelDecoderShaderLittleEndian = R"glsl(
 #version 330
 
-const vec3 palette[16] = vec3[] (
-    vec3(255.0/255.0, 255.0/255.0, 255.0/255.0), vec3(0.0/255.0, 0.0/255.0, 0.0/255.0),
-    vec3(230.0/255.0, 41.0/255.0, 55.0/255.0), vec3(0.0/255.0, 228.0/255.0, 48.0/255.0),
-    vec3(0.0/255.0, 121.0/255.0, 241.0/255.0), vec3(253.0/255.0, 249.0/255.0, 0.0/255.0),
-    vec3(255.0/255.0, 161.0/255.0, 0.0/255.0), vec3(200.0/255.0, 122.0/255.0, 255.0/255.0),
-    vec3(130.0/255.0, 130.0/255.0, 130.0/255.0), vec3(80.0/255.0, 80.0/255.0, 80.0/255.0),
-    vec3(190.0/255.0, 33.0/255.0, 55.0/255.0), vec3(0.0/255.0, 117.0/255.0, 44.0/255.0),
-    vec3(0.0/255.0, 82.0/255.0, 172.0/255.0), vec3(255.0/255.0, 203.0/255.0, 0.0/255.0),
-    vec3(127.0/255.0, 106.0/255.0, 79.0/255.0), vec3(255.0/255.0, 109.0/255.0, 194.0/255.0)
-);
-
 const float pixelScale = 1.0/12.0;
 
 // this uniform is an int instead of a uint because for some reason i cant copy data into a uint, the uniform
 // shader type is just not there
 uniform int pixelData[384]; // 1536 bytes, 1536/4 uints (384), 2 pixels per byte (8 per uint), 64*48 resolution
+uniform vec3 palette[16];
 
 out vec4 fragColor;
 
